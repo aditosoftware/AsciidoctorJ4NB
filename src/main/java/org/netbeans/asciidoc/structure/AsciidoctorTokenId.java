@@ -1,147 +1,145 @@
 package org.netbeans.asciidoc.structure;
 
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Map;
 import org.jtrim.collections.CollectionsEx;
-import org.netbeans.api.lexer.InputAttributes;
-import org.netbeans.api.lexer.Language;
-import org.netbeans.api.lexer.LanguagePath;
-import org.netbeans.api.lexer.Token;
-import org.netbeans.api.lexer.TokenId;
+import org.netbeans.api.lexer.*;
 import org.netbeans.spi.lexer.LanguageEmbedding;
 import org.netbeans.spi.lexer.LanguageHierarchy;
 import org.netbeans.spi.lexer.Lexer;
 import org.netbeans.spi.lexer.LexerRestartInfo;
 
-import static org.netbeans.asciidoc.structure.AsciidoctorFoldTypeProvider.*;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Map;
+
+import static org.netbeans.asciidoc.structure.AsciidoctorFoldTypeProvider.TYPE_HEADER;
+import static org.netbeans.asciidoc.structure.AsciidoctorFoldTypeProvider.TYPE_TEXT_BLOCK;
 
 public enum AsciidoctorTokenId implements TokenId {
-    HEADER1(1, TYPE_HEADER.code(), "header1", AsciidoctorTokenId::getHeaderName),
-    HEADER2(2, TYPE_HEADER.code(), "header2", AsciidoctorTokenId::getHeaderName),
-    HEADER3(3, TYPE_HEADER.code(), "header3", AsciidoctorTokenId::getHeaderName),
-    HEADER4(4, TYPE_HEADER.code(), "header4", AsciidoctorTokenId::getHeaderName),
-    HEADER5(5, TYPE_HEADER.code(), "header5", AsciidoctorTokenId::getHeaderName),
-    HEADER6(6, TYPE_HEADER.code(), "header6", AsciidoctorTokenId::getHeaderName),
-    CODE_BLOCK(Integer.MAX_VALUE, TYPE_TEXT_BLOCK.code(), "code_block", (a, b, c) -> "Code"),
-    TEXT_BLOCK(Integer.MAX_VALUE, TYPE_TEXT_BLOCK.code(), "text_block", (a, b, c) -> "Text Block"),
-    PLAIN(Integer.MAX_VALUE, null, "plain", (a, b, c) -> "Text");
+  HEADER1(1, TYPE_HEADER.code(), "header1", AsciidoctorTokenId::getHeaderName),
+  HEADER2(2, TYPE_HEADER.code(), "header2", AsciidoctorTokenId::getHeaderName),
+  HEADER3(3, TYPE_HEADER.code(), "header3", AsciidoctorTokenId::getHeaderName),
+  HEADER4(4, TYPE_HEADER.code(), "header4", AsciidoctorTokenId::getHeaderName),
+  HEADER5(5, TYPE_HEADER.code(), "header5", AsciidoctorTokenId::getHeaderName),
+  HEADER6(6, TYPE_HEADER.code(), "header6", AsciidoctorTokenId::getHeaderName),
+  CODE_BLOCK(Integer.MAX_VALUE, TYPE_TEXT_BLOCK.code(), "code_block", (a, b, c) -> "Code"),
+  TEXT_BLOCK(Integer.MAX_VALUE, TYPE_TEXT_BLOCK.code(), "text_block", (a, b, c) -> "Text Block"),
+  PLAIN(Integer.MAX_VALUE, null, "plain", (a, b, c) -> "Text");
 
-    private static final Map<String, AsciidoctorTokenId> BY_CODE_NAMES;
+  private static final Map<String, AsciidoctorTokenId> BY_CODE_NAMES;
 
-    static {
-        AsciidoctorTokenId[] ids = values();
-        BY_CODE_NAMES = CollectionsEx.newHashMap(ids.length);
+  static {
+    AsciidoctorTokenId[] ids = values();
+    BY_CODE_NAMES = CollectionsEx.newHashMap(ids.length);
 
-        for (AsciidoctorTokenId id: ids) {
-            BY_CODE_NAMES.put(id.getCodeName(), id);
-        }
+    for (AsciidoctorTokenId id : ids) {
+      BY_CODE_NAMES.put(id.getCodeName(), id);
+    }
+  }
+
+  private final int level;
+  private final String foldGroup;
+  private final String codeName;
+  private final NameParser nameParser;
+
+  AsciidoctorTokenId(int level, String foldGroup, String codeName, NameParser nameParser) {
+    this.level = level;
+    this.foldGroup = foldGroup;
+    this.codeName = codeName;
+    this.nameParser = nameParser;
+  }
+
+  private static String getHeaderName(CharSequence str, int startOffset, int endOffset) {
+    int strLength = endOffset - startOffset;
+    if (strLength <= 0) {
+      return "";
     }
 
-    private final int level;
-    private final String foldGroup;
-    private final String codeName;
-    private final NameParser nameParser;
+    int textStartIndex = findNonMatching(str, startOffset, endOffset, '=');
+    int textEndIndex = findEolIndex(str, textStartIndex, endOffset);
 
-    private AsciidoctorTokenId(int level, String foldGroup, String codeName, NameParser nameParser) {
-        this.level = level;
-        this.foldGroup = foldGroup;
-        this.codeName = codeName;
-        this.nameParser = nameParser;
+    StringBuilder result = new StringBuilder(strLength);
+    result.append(str, textStartIndex, textEndIndex);
+    return result.toString().trim();
+  }
+
+  private static int findEolIndex(CharSequence str, int startOffset, int endOffset) {
+    for (int i = startOffset; i < endOffset; i++) {
+      char ch = str.charAt(i);
+      if (ch == '\n' || ch == '\r') {
+        return i;
+      }
     }
+    return endOffset;
+  }
 
-    private static String getHeaderName(CharSequence str, int startOffset, int endOffset) {
-        int strLength = endOffset - startOffset;
-        if (strLength <= 0) {
-            return "";
-        }
-
-        int textStartIndex = findNonMatching(str, startOffset, endOffset, '=');
-        int textEndIndex = findEolIndex(str, textStartIndex, endOffset);
-
-        StringBuilder result = new StringBuilder(strLength);
-        result.append(str, textStartIndex, textEndIndex);
-        return result.toString().trim();
+  private static int findNonMatching(CharSequence str, int startOffset, int endOffset, char ch) {
+    for (int i = startOffset; i < endOffset; i++) {
+      if (str.charAt(i) != ch) {
+        return i;
+      }
     }
+    return endOffset;
+  }
 
-    private static int findEolIndex(CharSequence str, int startOffset, int endOffset) {
-        for (int i = startOffset; i < endOffset; i++) {
-            char ch = str.charAt(i);
-            if (ch == '\n' || ch == '\r') {
-                return i;
-            }
-        }
-        return endOffset;
-    }
+  public String getName(CharSequence str, int startOffset, int endOffset) {
+    return nameParser.getName(str, startOffset, endOffset);
+  }
 
-    private static int findNonMatching(CharSequence str, int startOffset, int endOffset, char ch) {
-        for (int i = startOffset; i < endOffset; i++) {
-            if (str.charAt(i) != ch) {
-                return i;
-            }
-        }
-        return endOffset;
-    }
+  public String tryGetFoldGroup() {
+    return foldGroup;
+  }
 
-    public String getName(CharSequence str, int startOffset, int endOffset) {
-        return nameParser.getName(str, startOffset, endOffset);
-    }
+  public boolean isTableOfContentToken() {
+    return level != Integer.MAX_VALUE;
+  }
 
-    public String tryGetFoldGroup() {
-        return foldGroup;
-    }
+  public int getLevel() {
+    return level;
+  }
 
-    public boolean isTableOfContentToken() {
-        return level != Integer.MAX_VALUE;
-    }
+  public static AsciidoctorTokenId tryGetByCode(String codeName) {
+    return BY_CODE_NAMES.get(codeName);
+  }
 
-    public int getLevel() {
-        return level;
-    }
-
-    public static AsciidoctorTokenId tryGetByCode(String codeName) {
-        return BY_CODE_NAMES.get(codeName);
-    }
-
-    private static final Language<AsciidoctorTokenId> LANGUAGE = new LanguageHierarchy<AsciidoctorTokenId>() {
-        @Override
-        protected Collection<AsciidoctorTokenId> createTokenIds() {
-            return EnumSet.allOf(AsciidoctorTokenId.class);
-        }
-
-        @Override
-        protected Lexer<AsciidoctorTokenId> createLexer(LexerRestartInfo<AsciidoctorTokenId> info) {
-            return AsciidoctorLexer.create(info);
-        }
-
-        @Override
-        protected String mimeType() {
-            return AsciidoctorLanguageConfig.MIME_TYPE;
-        }
-
-        @Override
-        protected LanguageEmbedding<?> embedding(
-                Token<AsciidoctorTokenId> token,
-                LanguagePath languagePath,
-                InputAttributes inputAttributes) {
-            return null;
-        }
-    }.language();
-
-    public String getCodeName() {
-        return codeName;
+  private static final Language<AsciidoctorTokenId> LANGUAGE = new LanguageHierarchy<AsciidoctorTokenId>() {
+    @Override
+    protected Collection<AsciidoctorTokenId> createTokenIds() {
+      return EnumSet.allOf(AsciidoctorTokenId.class);
     }
 
     @Override
-    public String primaryCategory() {
-        return codeName;
+    protected Lexer<AsciidoctorTokenId> createLexer(LexerRestartInfo<AsciidoctorTokenId> info) {
+      return AsciidoctorLexer.create(info);
     }
 
-    public static Language<AsciidoctorTokenId> language() {
-        return LANGUAGE;
+    @Override
+    protected String mimeType() {
+      return AsciidoctorLanguageConfig.MIME_TYPE;
     }
 
-    private interface NameParser {
-        public String getName(CharSequence str, int startOffset, int endOffset);
+    @Override
+    protected LanguageEmbedding<?> embedding(
+        Token<AsciidoctorTokenId> token,
+        LanguagePath languagePath,
+        InputAttributes inputAttributes) {
+      return null;
     }
+  }.language();
+
+  public String getCodeName() {
+    return codeName;
+  }
+
+  @Override
+  public String primaryCategory() {
+    return codeName;
+  }
+
+  public static Language<AsciidoctorTokenId> language() {
+    return LANGUAGE;
+  }
+
+  private interface NameParser {
+    String getName(CharSequence str, int startOffset, int endOffset);
+  }
 }
