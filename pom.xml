@@ -10,7 +10,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <netbeans.version>RELEASE81</netbeans.version>
+    <netbeans.version>RELEASE90a</netbeans.version>
     <asm.version>4.1</asm.version>
     <jtrim.version>1.7.3</jtrim.version>
   </properties>
@@ -153,6 +153,11 @@
       <artifactId>org-netbeans-modules-editor-util</artifactId>
       <version>${netbeans.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
+      <artifactId>org-netbeans-modules-csl-types</artifactId>
+      <version>${netbeans.version}</version>
+    </dependency>
 
     <!--  AsciiDoctor  -->
     <dependency>
@@ -261,9 +266,13 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>nbm-maven-plugin</artifactId>
-        <version>3.13</version>
+        <version>4.2-adito-SNAPSHOT</version>
         <extensions>true</extensions>
+        <configuration>
+          <sourceManifestFile>${project.basedir}/src/main/nbm/manifest.mf</sourceManifestFile>
+        </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -273,14 +282,26 @@
           <target>1.9</target>
         </configuration>
       </plugin>
+
+      <!--Plugin: Jar-Plugin to exclude maven descriptors and add manifest entries -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
+        <version>3.0.1</version>
         <configuration>
-          <useDefaultManifestFile>true</useDefaultManifestFile>
+          <archive>
+            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+            <manifest>
+              <useUniqueVersions>true</useUniqueVersions>
+              <addClasspath>false</addClasspath>
+              <addDefaultImplementationEntries>false</addDefaultImplementationEntries>
+              <addDefaultSpecificationEntries>false</addDefaultSpecificationEntries>
+            </manifest>
+            <addMavenDescriptor>false</addMavenDescriptor>
+          </archive>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
