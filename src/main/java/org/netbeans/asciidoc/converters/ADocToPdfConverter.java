@@ -27,10 +27,13 @@ import java.util.*;
 @ServiceProvider(service = IFileConverter.class)
 public class ADocToPdfConverter extends BaseAsciiDocConverter implements IFileConverter
 {
+
+  private static final String CONVERTER_FILE_TYPE = "pdf";
+
   private static List<String> asciiDocMimeTypes = List.of("text/asciidoc", "text/x-asciidoc");
   private static List<String> asciiDocFileEndings = List.of("adoc", "asciidoc");
   private static List<String> htmlMimeType = List.of("application/pdf", "application/x-pdf");
-  private static List<String> pdfFileEndings = List.of("pdf");
+  private static List<String> pdfFileEndings = List.of(CONVERTER_FILE_TYPE);
 
   @Override
   public boolean canConvert(@NotNull String pSourceType, @NotNull String pTargetType, @NotNull Map<Object, Object> pParams)
@@ -44,7 +47,10 @@ public class ADocToPdfConverter extends BaseAsciiDocConverter implements IFileCo
   {
     if(canConvert(pSourceType, pTargetType, Map.of()))
     {
-      Options options = OptionsBuilder.options().backend("pdf").mkDirs(true).toFile(pTargetLocation).get();
+      Options options = OptionsBuilder.options()
+          .backend(CONVERTER_FILE_TYPE)
+          .mkDirs(true)
+          .toFile(adjustFileEnding(pTargetLocation, CONVERTER_FILE_TYPE)).get();
       AsciidoctorConverter.getDefault().getDoctor().convertFile(pSourceLocation, fillOptions(options, pParams));
     }
     return null;

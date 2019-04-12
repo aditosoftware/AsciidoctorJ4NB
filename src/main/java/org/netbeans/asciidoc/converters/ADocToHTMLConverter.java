@@ -28,10 +28,12 @@ import java.util.*;
 public class ADocToHTMLConverter extends BaseAsciiDocConverter implements IFileConverter
 {
 
+  private static final String CONVERTER_FILE_TYPE = "html";
+
   private static List<String> asciiDocMimeTypes = List.of("text/asciidoc", "text/x-asciidoc");
   private static List<String> asciiDocFileEndings = List.of("adoc", "asciidoc");
   private static List<String> htmlMimeType = List.of("text/html");
-  private static List<String> htmlFileEndings = List.of("html");
+  private static List<String> htmlFileEndings = List.of(CONVERTER_FILE_TYPE);
 
   @Override
   public boolean canConvert(@NotNull String pSourceType, @NotNull String pTargetType, @NotNull Map<Object, Object> pParams)
@@ -45,7 +47,10 @@ public class ADocToHTMLConverter extends BaseAsciiDocConverter implements IFileC
   {
     if (canConvert(pSourceType, pTargetType, Map.of()))
     {
-      Options options = OptionsBuilder.options().safe(SafeMode.SAFE).docType("html").mkDirs(true).toFile(pTargetLocation).get();
+      Options options = OptionsBuilder.options()
+          .docType(CONVERTER_FILE_TYPE)
+          .mkDirs(true)
+          .toFile(this.adjustFileEnding(pTargetLocation, CONVERTER_FILE_TYPE)).get();
       AsciidoctorConverter.getDefault().getDoctor().convertFile(pSourceLocation, fillOptions(options, pParams));
     }
     return null;

@@ -1,7 +1,9 @@
 package org.netbeans.asciidoc.converters;
 
 import org.asciidoctor.*;
+import org.jetbrains.annotations.*;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -33,6 +35,22 @@ class BaseAsciiDocConverter
       }
     }
     return optionsMap;
+  }
+
+  /**
+   *
+   * @param pFile File whose fileEnding should be checked for conformity with pFileEnding
+   * @param pFileEnding the fileEnding the passed file should have
+   * @return the File itself if the fileEnding was correct or no fileEnding could be determined, the file with adjusted fileEnding otherwise
+   */
+  File adjustFileEnding(@NotNull File pFile, @NotNull String pFileEnding) {
+    if(!pFile.getAbsolutePath().endsWith("." + pFileEnding)) {
+      String path = pFile.getAbsolutePath();
+      if(path.lastIndexOf(".") != -1) {
+        return new File(path.substring(0, path.lastIndexOf(".")) + "." + pFileEnding);
+      }
+    }
+    return pFile;
   }
 
   /**
