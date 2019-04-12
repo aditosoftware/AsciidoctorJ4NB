@@ -25,7 +25,7 @@ class BaseAsciiDocConverter
     {
       if ("safe".equals(entry.getKey()))
       {
-        optionsMap.put((String) entry.getKey(), convert((String) entry.getValue()));
+        optionsMap.put((String) entry.getKey(), convert((String) entry.getValue()).getLevel());
       }
       else
       {
