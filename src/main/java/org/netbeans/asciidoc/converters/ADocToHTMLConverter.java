@@ -2,7 +2,7 @@ package org.netbeans.asciidoc.converters;
 
 import de.adito.aditoweb.nbm.nbide.nbaditointerface.conversions.IFileConverter;
 import org.asciidoctor.*;
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
 import org.netbeans.asciidoc.AsciidoctorConverter;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -50,6 +50,9 @@ public class ADocToHTMLConverter extends BaseAsciiDocConverter implements IFileC
       Options options = OptionsBuilder.options()
           .docType(CONVERTER_FILE_TYPE)
           .mkDirs(true)
+          .attributes(AttributesBuilder.attributes()
+                          .noFooter(true)
+                          .unsetStyleSheet())
           .toFile(this.adjustFileEnding(pTargetLocation, CONVERTER_FILE_TYPE)).get();
       AsciidoctorConverter.getDefault().getDoctor().convertFile(pSourceLocation, fillOptions(options, pParams));
     }
