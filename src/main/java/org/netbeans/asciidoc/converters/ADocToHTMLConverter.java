@@ -2,11 +2,11 @@ package org.netbeans.asciidoc.converters;
 
 import de.adito.aditoweb.nbm.nbide.nbaditointerface.conversions.IFileConverter;
 import org.asciidoctor.*;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.*;
 import org.netbeans.asciidoc.AsciidoctorConverter;
 import org.openide.util.lookup.ServiceProvider;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -52,9 +52,28 @@ public class ADocToHTMLConverter extends BaseAsciiDocConverter implements IFileC
           .mkDirs(true)
           .attributes(AttributesBuilder.attributes()
                           .noFooter(true)
+                          .showTitle(true)
                           .unsetStyleSheet())
           .toFile(this.adjustFileEnding(pTargetLocation, CONVERTER_FILE_TYPE)).get();
       AsciidoctorConverter.getDefault().getDoctor().convertFile(pSourceLocation, fillOptions(options, pParams));
+    }
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public Object convert(@NotNull Reader pSource, @NotNull Writer pTarget, @NotNull String pSourceType, @NotNull String pTargetType, @NotNull Map<Object, Object> pParams) throws IOException
+  {
+    if (canConvert(pSourceType, pTargetType, Map.of()))
+    {
+      Options options = OptionsBuilder.options()
+          .docType(CONVERTER_FILE_TYPE)
+          .attributes(AttributesBuilder.attributes()
+                          .noFooter(true)
+                          .showTitle(true)
+                          .unsetStyleSheet())
+          .get();
+      AsciidoctorConverter.getDefault().getDoctor().convert(pSource, pTarget, fillOptions(options, pParams));
     }
     return null;
   }
