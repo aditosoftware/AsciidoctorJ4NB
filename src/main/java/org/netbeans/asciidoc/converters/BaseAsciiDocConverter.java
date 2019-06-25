@@ -4,7 +4,7 @@ import org.asciidoctor.*;
 import org.jetbrains.annotations.*;
 
 import java.io.File;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Basic class for the Converter classes that has some functions all of them need
@@ -28,6 +28,12 @@ class BaseAsciiDocConverter
       if ("safe".equals(entry.getKey()))
       {
         optionsMap.put((String) entry.getKey(), convert((String) entry.getValue()).getLevel());
+      }
+      else if(entry.getKey() != null && String.valueOf(entry.getKey()).startsWith("ATTRIBUTE_"))
+      {
+        Map<Object, Object> map = new HashMap<>((Map<Object, Object>) optionsMap.getOrDefault(Options.ATTRIBUTES, new HashMap<>()));
+        map.put(String.valueOf(entry.getKey()).substring("ATTRIBUTE_".length()), entry.getValue());
+        optionsMap.put(Options.ATTRIBUTES, map);
       }
       else
       {

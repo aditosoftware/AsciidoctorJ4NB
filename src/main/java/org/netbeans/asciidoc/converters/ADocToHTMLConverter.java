@@ -47,13 +47,17 @@ public class ADocToHTMLConverter extends BaseAsciiDocConverter implements IFileC
   {
     if (canConvert(pSourceType, pTargetType, Map.of()))
     {
+      AttributesBuilder attributes = AttributesBuilder.attributes()
+          .noFooter(true)
+          .showTitle(true);
+
+      if(!pParams.containsKey("ATTRIBUTE_stylesheet"))
+        attributes.unsetStyleSheet();
+
       Options options = OptionsBuilder.options()
           .docType(CONVERTER_FILE_TYPE)
           .mkDirs(true)
-          .attributes(AttributesBuilder.attributes()
-                          .noFooter(true)
-                          .showTitle(true)
-                          .unsetStyleSheet())
+          .attributes(attributes)
           .toFile(this.adjustFileEnding(pTargetLocation, CONVERTER_FILE_TYPE)).get();
       AsciidoctorConverter.getDefault().getDoctor().convertFile(pSourceLocation, fillOptions(options, pParams));
     }
@@ -66,12 +70,16 @@ public class ADocToHTMLConverter extends BaseAsciiDocConverter implements IFileC
   {
     if (canConvert(pSourceType, pTargetType, Map.of()))
     {
+      AttributesBuilder attributes = AttributesBuilder.attributes()
+          .noFooter(true)
+          .showTitle(true);
+
+      if(!pParams.containsKey("ATTRIBUTE_stylesheet"))
+        attributes.unsetStyleSheet();
+
       Options options = OptionsBuilder.options()
           .docType(CONVERTER_FILE_TYPE)
-          .attributes(AttributesBuilder.attributes()
-                          .noFooter(true)
-                          .showTitle(true)
-                          .unsetStyleSheet())
+          .attributes(attributes)
           .get();
       AsciidoctorConverter.getDefault().getDoctor().convert(pSource, pTarget, fillOptions(options, pParams));
     }
