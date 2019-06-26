@@ -1,5 +1,6 @@
 package org.netbeans.asciidoc;
 
+import org.netbeans.asciidoc.actions.ExportToPDFAction;
 import org.netbeans.asciidoc.structure.AsciidoctorLanguageConfig;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -43,6 +44,7 @@ public final class AdocViewElement implements MultiViewElement {
     this.toolBarRef = new LazyValue<>(() -> {
       JToolBar toolbar = new JToolBar();
       toolbar.setFloatable(false);
+      toolbar.add(new ExportToPDFAction(lookup));
       return toolbar;
     });
 

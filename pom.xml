@@ -168,7 +168,7 @@
     <dependency>
       <groupId>org.asciidoctor</groupId>
       <artifactId>asciidoctorj-pdf</artifactId>
-      <version>1.5.0-alpha.16</version>
+      <version>1.5.0-alpha.11</version>
     </dependency>
     <dependency>
       <groupId>org.jruby</groupId>
@@ -269,6 +269,7 @@
         <version>4.2-adito-SNAPSHOT</version>
         <extensions>true</extensions>
         <configuration>
+          <useOSGiDependencies>false</useOSGiDependencies>
           <sourceManifestFile>${project.basedir}/src/main/nbm/manifest.mf</sourceManifestFile>
         </configuration>
       </plugin>
@@ -300,6 +301,20 @@
             <addMavenDescriptor>false</addMavenDescriptor>
           </archive>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
