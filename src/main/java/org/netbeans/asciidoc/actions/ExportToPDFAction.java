@@ -7,6 +7,7 @@ import org.openide.loaders.DataObject;
 import org.openide.util.*;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.io.*;
 import java.nio.file.Paths;
@@ -33,7 +34,7 @@ public class ExportToPDFAction extends AbstractAction
   {
     JFileChooser fileChooser = new JFileChooser();
     fileChooser.setMultiSelectionEnabled(false);
-    fileChooser.setFileFilter(fileChooser.getAcceptAllFileFilter());
+    fileChooser.setFileFilter(new FileNameExtensionFilter("PDF", "pdf"));
     int returnValue = fileChooser.showOpenDialog(null);
     if(returnValue == JFileChooser.APPROVE_OPTION)
     {
