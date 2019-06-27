@@ -43,10 +43,16 @@ public class ADocToPdfConverter extends BaseAsciiDocConverter
   {
     if(canConvert(pSourceType, pTargetType, Map.of()))
     {
+      File targetFile = adjustFileEnding(pTargetLocation, CONVERTER_FILE_TYPE);
+
+      // delete if exists, because it will be regenerated
+      if(targetFile.exists() && targetFile.canRead())
+        targetFile.delete();
+
       Options options = OptionsBuilder.options()
           .backend(CONVERTER_FILE_TYPE)
           .mkDirs(true)
-          .toFile(adjustFileEnding(pTargetLocation, CONVERTER_FILE_TYPE)).get();
+          .toFile(targetFile).get();
       AsciidoctorConverter.getDefault().getDoctor().convertFile(pSourceLocation, fillOptions(options, pParams));
     }
     return null;
