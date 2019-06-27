@@ -53,9 +53,9 @@ public class BaseAsciiDocConverter
     {
       String path = pFile.getAbsolutePath();
       if (path.lastIndexOf(".") != -1)
-      {
         return new File(path.substring(0, path.lastIndexOf(".")) + "." + pFileEnding);
-      }
+      else
+        return new File(path + "." + pFileEnding);
     }
     return pFile;
   }
