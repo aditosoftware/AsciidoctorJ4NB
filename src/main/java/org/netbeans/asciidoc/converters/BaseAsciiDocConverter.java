@@ -11,7 +11,7 @@ import java.util.*;
  *
  * @author m.kaspera, 08.04.2019
  */
-class BaseAsciiDocConverter
+public class BaseAsciiDocConverter
 {
 
   /**
@@ -47,7 +47,7 @@ class BaseAsciiDocConverter
    * @param pFileEnding the fileEnding the passed file should have
    * @return the File itself if the fileEnding was correct or no fileEnding could be determined, the file with adjusted fileEnding otherwise
    */
-  File adjustFileEnding(@NotNull File pFile, @NotNull String pFileEnding)
+  static File adjustFileEnding(@NotNull File pFile, @NotNull String pFileEnding)
   {
     if (!pFile.getAbsolutePath().endsWith("." + pFileEnding))
     {
@@ -77,7 +77,7 @@ class BaseAsciiDocConverter
    * @param pSafeMode safeMode given as String
    * @return corresponding SafeMode
    */
-  private SafeMode convert(String pSafeMode)
+  private static SafeMode convert(String pSafeMode)
   {
     switch (pSafeMode)
     {

@@ -1,7 +1,7 @@
 package org.netbeans.asciidoc.actions;
 
-import de.adito.aditoweb.nbm.nbide.nbaditointerface.conversions.IFileConverter;
 import org.jetbrains.annotations.NotNull;
+import org.netbeans.asciidoc.converters.standalone.ExportPdfStandalone;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.openide.util.*;
@@ -9,7 +9,7 @@ import org.openide.util.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
-import java.util.*;
+import java.nio.file.Paths;
 
 /**
  * @author m.kaspera, 18.06.2019
@@ -19,8 +19,6 @@ public class ExportToPDFAction extends AbstractAction
 
   @NotNull
   private final Lookup lookup;
-  private static final String SOURCE_FILE_TYPE = "adoc";
-  private static final String TARGET_FILE_TYPE ="pdf";
 
   public ExportToPDFAction(@NotNull Lookup pLookup)
   {
@@ -39,24 +37,25 @@ public class ExportToPDFAction extends AbstractAction
     if(returnValue == JFileChooser.APPROVE_OPTION)
     {
       File exportToFile = fileChooser.getSelectedFile();
-      IFileConverter converter = Lookup.getDefault().lookupAll(IFileConverter.class)
-          .stream()
-          .filter(pConverter -> pConverter.canConvert(SOURCE_FILE_TYPE, TARGET_FILE_TYPE, new HashMap<>()))
-          .findFirst()
-          .orElse(null);
-      FileObject fileToConvert = lookup.lookup(FileObject.class);
-      if (fileToConvert == null)
-        fileToConvert = lookup.lookup(DataObject.class).getPrimaryFile();
-      if (fileToConvert != null && converter != null)
+      try
       {
-        try
+        FileObject fileToConvert = lookup.lookup(FileObject.class);
+        if (fileToConvert == null)
+          fileToConvert = lookup.lookup(DataObject.class).getPrimaryFile();
+        File javaExe = new File(System.getProperty("java.home") + "/lib/java.exe");
+        if (!javaExe.exists())
+          javaExe = new File(System.getProperty("java.home") + "/bin/java.exe");
+        if (javaExe.exists() && fileToConvert != null)
         {
-          converter.convert(new File(fileToConvert.getPath()), exportToFile, SOURCE_FILE_TYPE, TARGET_FILE_TYPE, new HashMap<>());
+          ProcessBuilder builder = new ProcessBuilder(javaExe.getAbsolutePath(), "-cp", _getStandaloneCP() + "/*", ExportPdfStandalone.class.getCanonicalName(),
+                                                      fileToConvert.getPath(), exportToFile.getAbsolutePath());
+          builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+          builder.start();
         }
-        catch (IOException pE)
-        {
-          pE.printStackTrace();
-        }
+      }
+      catch (IOException pE)
+      {
+        pE.printStackTrace();
       }
     }
   }
@@ -64,7 +63,11 @@ public class ExportToPDFAction extends AbstractAction
   @Override
   public boolean isEnabled()
   {
-    return Lookup.getDefault().lookupAll(IFileConverter.class).stream().anyMatch(pConverter -> pConverter.canConvert(SOURCE_FILE_TYPE, TARGET_FILE_TYPE, new HashMap<>()))
-        && (lookup.lookup(FileObject.class) != null || lookup.lookup(DataObject.class).getPrimaryFile() != null);
+    return ExportPdfStandalone.class.getCanonicalName() != null;
+  }
+
+  private String _getStandaloneCP()
+  {
+    return Paths.get(ExportPdfStandalone.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(6)).getParent().toString();
   }
 }

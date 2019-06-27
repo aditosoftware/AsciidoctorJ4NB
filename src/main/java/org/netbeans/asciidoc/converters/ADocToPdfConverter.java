@@ -1,10 +1,8 @@
 package org.netbeans.asciidoc.converters;
 
-import de.adito.aditoweb.nbm.nbide.nbaditointerface.conversions.IFileConverter;
 import org.asciidoctor.*;
 import org.jetbrains.annotations.*;
 import org.netbeans.asciidoc.AsciidoctorConverter;
-import org.openide.util.lookup.ServiceProvider;
 
 import java.io.*;
 import java.util.*;
@@ -24,8 +22,7 @@ import java.util.*;
  *
  * @author m.kaspera, 08.04.2019
  */
-@ServiceProvider(service = IFileConverter.class)
-public class ADocToPdfConverter extends BaseAsciiDocConverter implements IFileConverter
+public class ADocToPdfConverter extends BaseAsciiDocConverter
 {
 
   private static final String CONVERTER_FILE_TYPE = "pdf";
@@ -35,15 +32,14 @@ public class ADocToPdfConverter extends BaseAsciiDocConverter implements IFileCo
   private static List<String> htmlMimeType = List.of("application/pdf", "application/x-pdf");
   private static List<String> pdfFileEndings = List.of(CONVERTER_FILE_TYPE);
 
-  @Override
   public boolean canConvert(@NotNull String pSourceType, @NotNull String pTargetType, @NotNull Map<Object, Object> pParams)
   {
     return (asciiDocFileEndings.contains(pSourceType) || asciiDocMimeTypes.contains(pSourceType))
         && (pdfFileEndings.contains(pTargetType) || htmlMimeType.contains(pTargetType));
   }
 
-  @Override
-  public Object convert(@NotNull File pSourceLocation, @NotNull File pTargetLocation, @NotNull String pSourceType, @NotNull String pTargetType, @NotNull Map<Object, Object> pParams)
+  public Object convert(@NotNull File pSourceLocation, @NotNull File pTargetLocation, @NotNull String pSourceType, @NotNull String pTargetType,
+                        @NotNull Map<Object, Object> pParams)
   {
     if(canConvert(pSourceType, pTargetType, Map.of()))
     {
@@ -57,8 +53,8 @@ public class ADocToPdfConverter extends BaseAsciiDocConverter implements IFileCo
   }
 
   @Nullable
-  @Override
-  public Object convert(@NotNull Reader pSource, @NotNull Writer pTarget, @NotNull String pSourceType, @NotNull String pTargetType, @NotNull Map<Object, Object> pParams) throws IOException
+  public Object convert(@NotNull Reader pSource, @NotNull Writer pTarget, @NotNull String pSourceType, @NotNull String pTargetType,
+                        @NotNull Map<Object, Object> pParams) throws IOException
   {
     if(canConvert(pSourceType, pTargetType, Map.of()))
     {
