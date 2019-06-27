@@ -27,7 +27,6 @@ public class ExportPdfStandalone extends BaseAsciiDocConverter
    */
   public static void main(String[] args)
   {
-    System.out.println(Arrays.toString(args));
     if (args.length >= 2 && args.length % 2 == 0)
     {
       File sourceFile = new File(args[0]);
