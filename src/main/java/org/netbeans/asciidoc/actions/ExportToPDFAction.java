@@ -23,6 +23,7 @@ public class ExportToPDFAction extends AbstractAction
   public ExportToPDFAction(@NotNull Lookup pLookup)
   {
     super("Export To PDF");
+    putValue(SHORT_DESCRIPTION, "Export to PDF");
     putValue(SMALL_ICON, new ImageIcon(getClass().getResource(NbBundle.getMessage(ExportToPDFAction.class, "exportToPDFIcon"))));
     lookup = pLookup;
   }
