@@ -3,4 +3,10 @@ AutoUpdate-Show-In-Client: true
 OpenIDE-Module-Localizing-Bundle: org/netbeans/asciidoc/Bundle.properties
 OpenIDE-Module-Layer: org/netbeans/asciidoc/layer.xml
 OpenIDE-Module-Long-Description: AsciidoctorJ4NB is used to render the preview for the documentation written in AsciiDoc within the ADITO Designer.
+  <p style="font-weight: bold;">Changelog</p>
+  <p style="font-weight: bold;">v.1.1.1</p>
+  <p style="margin-left: 10px; font-weight: bold;">BUGFIXES</p>
+    <ul>
+      <li>Fix: Exporting an AsciiDoc as PDF now works in both Linux and Windows</li>
+    </ul>
 OpenIDE-Module-Short-Description: Plugin for rendering previews of AsciiDoc files
