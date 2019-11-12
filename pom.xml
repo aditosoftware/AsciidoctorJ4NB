@@ -275,9 +275,9 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+        <groupId>org.apache.netbeans.utilities</groupId>
         <artifactId>nbm-maven-plugin</artifactId>
-        <version>4.2-adito-SNAPSHOT</version>
+        <version>4.3-SNAPSHOT</version>
         <extensions>true</extensions>
         <configuration>
           <useOSGiDependencies>false</useOSGiDependencies>
