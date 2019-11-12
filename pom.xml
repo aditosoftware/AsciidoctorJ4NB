@@ -36,6 +36,11 @@
       <artifactId>nb-adito-interface</artifactId>
       <version>1.0.16</version>
     </dependency>
+    <dependency>
+      <groupId>de.adito.nbm.wrappers</groupId>
+      <artifactId>lwjavafx</artifactId>
+      <version>11-1.2.0</version>
+    </dependency>
 
     <!--  Netbeans  -->
     <dependency>
