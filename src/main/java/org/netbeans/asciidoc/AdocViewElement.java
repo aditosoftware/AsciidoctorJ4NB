@@ -6,10 +6,7 @@ import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
 import org.openide.awt.UndoRedo;
-import org.openide.filesystems.FileChangeAdapter;
-import org.openide.filesystems.FileChangeListener;
-import org.openide.filesystems.FileEvent;
-import org.openide.filesystems.FileObject;
+import org.openide.filesystems.*;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
@@ -75,13 +72,7 @@ public final class AdocViewElement implements MultiViewElement {
   }
 
   private void updateWithAsciidoc() {
-    panelRef.get().updateWithAsciidoc(() -> {
-      try {
-        return obj.getPrimaryFile().asText();
-      } catch (IOException ex) {
-        throw new UncheckedIOException(ex);
-      }
-    });
+    panelRef.get().updateWithAsciidoc(() -> FileUtil.toFile(obj.getPrimaryFile()));
   }
 
   private FileChangeListener detachChangeListener() {

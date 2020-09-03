@@ -37,8 +37,6 @@ public class BaseAsciiDocConverter
         optionsMap.put((String) pKey, pValue);
     });
 
-    handleSpecialBehaviours(optionsMap, attributesMap, pParams);
-
     return optionsMap;
   }
 
@@ -58,17 +56,6 @@ public class BaseAsciiDocConverter
         return new File(path + "." + pFileEnding);
     }
     return pFile;
-  }
-
-  /**
-   * Handles all special behaviours, if an attribute or option is set in params
-   *
-   * @param pOptions    Options
-   * @param pAttributes Attributes
-   * @param pParams     User Params
-   */
-  protected void handleSpecialBehaviours(Map<String, Object> pOptions, Map<Object, Object> pAttributes, Map<Object, Object> pParams)
-  {
   }
 
   /**

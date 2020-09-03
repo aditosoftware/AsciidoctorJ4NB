@@ -9,9 +9,13 @@ import org.jtrim.concurrent.GenericUpdateTaskExecutor;
 import org.jtrim.concurrent.TaskExecutor;
 import org.jtrim.concurrent.UpdateTaskExecutor;
 import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.asciidoc.converters.ADocToHTMLConverter;
+import org.openide.filesystems.FileObject;
 
 import javax.swing.*;
-import java.util.Objects;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,15 +47,23 @@ public final class AdocVisualPanel extends JPanel {
     add(jfxPanel);
   }
 
-  public void updateWithAsciidoc(Supplier<String> asciidocProvider) {
+  public void updateWithAsciidoc(Supplier<File> asciidocProvider) {
     Objects.requireNonNull(asciidocProvider, "asciidocProvider");
 
     adocUpdater.execute(() -> {
       ProgressHandle handle = ProgressHandle.createHandle("Rendering Asciidoc ...");
       handle.start();
       try {
-        String asciidocText = asciidocProvider.get();
-        String html = AsciidoctorConverter.getDefault().convert(asciidocText, getInitialOptions());
+        File target = Files.createTempFile("adocout", ".html").toFile();
+        new ADocToHTMLConverter().convert(asciidocProvider.get(), target, "adoc", "html", Map.of(
+            "ATTRIBUTE_" + Attributes.SHOW_TITLE, true,
+            "ATTRIBUTE_" + Attributes.SOURCE_HIGHLIGHTER, "coderay",
+            "ATTRIBUTE_coderay-css", "style",
+            Options.BACKEND, "html5",
+            Options.SAFE, "unsafe",
+            Options.HEADER_FOOTER, true
+        ));
+        String html = Files.readString(target.toPath());
 
         htmlComponentUpdater.execute(() -> updateHtmlNow(html));
       } catch (Throwable ex) {
@@ -72,20 +84,6 @@ public final class AdocVisualPanel extends JPanel {
     }
 
     currentWebView.getEngine().loadContent(html);
-  }
-
-  public Options getInitialOptions() {
-    Attributes attrs = AttributesBuilder.attributes()
-        .showTitle(true)
-        .sourceHighlighter("coderay")
-        .attribute("coderay-css", "style")
-        .get();
-    OptionsBuilder opts = OptionsBuilder.options()
-        .safe(SafeMode.SAFE)
-        .backend("html5")
-        .headerFooter(true)
-        .attributes(attrs);
-    return opts.get();
   }
 
   @Override

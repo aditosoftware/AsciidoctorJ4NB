@@ -1,8 +1,10 @@
 package org.netbeans.asciidoc.converters;
 
+import de.adito.aditoweb.nbm.nbide.nbaditointerface.conversions.IFileConverterParameterProvider;
 import org.asciidoctor.*;
 import org.jetbrains.annotations.*;
 import org.netbeans.asciidoc.AsciidoctorConverter;
+import org.openide.util.Lookup;
 
 import java.io.*;
 import java.util.*;
@@ -27,10 +29,10 @@ public class ADocToHTMLConverter extends BaseAsciiDocConverter
 
   private static final String CONVERTER_FILE_TYPE = "html";
 
-  private static List<String> asciiDocMimeTypes = List.of("text/asciidoc", "text/x-asciidoc");
-  private static List<String> asciiDocFileEndings = List.of("adoc", "asciidoc");
-  private static List<String> htmlMimeType = List.of("text/html");
-  private static List<String> htmlFileEndings = List.of(CONVERTER_FILE_TYPE);
+  private static final List<String> asciiDocMimeTypes = List.of("text/asciidoc", "text/x-asciidoc");
+  private static final List<String> asciiDocFileEndings = List.of("adoc", "asciidoc");
+  private static final List<String> htmlMimeType = List.of("text/html");
+  private static final List<String> htmlFileEndings = List.of(CONVERTER_FILE_TYPE);
 
   public boolean canConvert(@NotNull String pSourceType, @NotNull String pTargetType, @NotNull Map<Object, Object> pParams)
   {
@@ -43,14 +45,18 @@ public class ADocToHTMLConverter extends BaseAsciiDocConverter
   {
     if (canConvert(pSourceType, pTargetType, Map.of()))
     {
-      Options options = OptionsBuilder.options()
-          .docType(CONVERTER_FILE_TYPE)
-          .mkDirs(true)
-          .attributes(AttributesBuilder.attributes()
-                          .noFooter(true)
-                          .unsetStyleSheet())
-          .toFile(adjustFileEnding(pTargetLocation, CONVERTER_FILE_TYPE)).get();
-      AsciidoctorConverter.getDefault().getDoctor().convertFile(pSourceLocation, fillOptions(options, pParams));
+      Map<String, Object> params = fillOptions(OptionsBuilder.options()
+                                                   .docType(CONVERTER_FILE_TYPE)
+                                                   .mkDirs(true)
+                                                   .toFile(adjustFileEnding(pTargetLocation, CONVERTER_FILE_TYPE)).get(),
+                                               pParams);
+
+      // Params modify
+      for (IFileConverterParameterProvider prov : Lookup.getDefault().lookupAll(IFileConverterParameterProvider.class))
+        prov.modifyParameters(pSourceLocation, pTargetLocation, pSourceType, pTargetType, params);
+
+      // Convert
+      AsciidoctorConverter.getDefault().getDoctor().convertFile(pSourceLocation, params);
     }
     return null;
   }
@@ -63,24 +69,10 @@ public class ADocToHTMLConverter extends BaseAsciiDocConverter
     {
       Options options = OptionsBuilder.options()
           .docType(CONVERTER_FILE_TYPE)
-          .attributes(AttributesBuilder.attributes()
-                          .noFooter(true)
-                          .showTitle(true))
           .get();
       AsciidoctorConverter.getDefault().getDoctor().convert(pSource, pTarget, fillOptions(options, pParams));
     }
     return null;
-  }
-
-  @Override
-  protected void handleSpecialBehaviours(Map<String, Object> pOptions, Map<Object, Object> pAttributes, Map<Object, Object> pParams)
-  {
-    super.handleSpecialBehaviours(pOptions, pAttributes, pParams);
-
-    if (pParams.containsKey("ATTRIBUTE_stylesheet"))
-      pOptions.put(Options.HEADER_FOOTER, true);
-    else
-      pAttributes.put(Attributes.NOT_STYLESHEET_NAME, "");
   }
 
 }
