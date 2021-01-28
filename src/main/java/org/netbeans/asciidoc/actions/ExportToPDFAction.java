@@ -6,6 +6,7 @@ import org.netbeans.asciidoc.converters.standalone.ExportPdfStandalone;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
 import org.openide.util.*;
+import org.openide.windows.WindowManager;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -40,7 +41,7 @@ public class ExportToPDFAction extends AbstractAction
     fileChooser.setDialogTitle("Export to PDF");
     fileChooser.setMultiSelectionEnabled(false);
     fileChooser.setFileFilter(new FileNameExtensionFilter("PDF", "pdf"));
-    int returnValue = fileChooser.showSaveDialog(null);
+    int returnValue = fileChooser.showSaveDialog(WindowManager.getDefault().getMainWindow());
     if (returnValue == JFileChooser.APPROVE_OPTION)
     {
       File exportToFile = fileChooser.getSelectedFile();
