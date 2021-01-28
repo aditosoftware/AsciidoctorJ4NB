@@ -1,7 +1,9 @@
 package org.netbeans.asciidoc.actions;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.lang3.SystemUtils;
 import org.jetbrains.annotations.NotNull;
+import org.netbeans.api.progress.*;
 import org.netbeans.asciidoc.converters.standalone.ExportPdfStandalone;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
@@ -12,10 +14,11 @@ import org.openide.windows.WindowManager;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
-import java.io.*;
+import java.io.File;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Locale;
+import java.util.concurrent.*;
 import java.util.logging.*;
 
 /**
@@ -23,10 +26,11 @@ import java.util.logging.*;
  */
 public class ExportToPDFAction extends AbstractAction
 {
+  private static final Logger logger = Logger.getLogger(ExportToPDFAction.class.getName());
 
   @NotNull
   private final Lookup lookup;
-  private final Logger logger = Logger.getLogger(ExportToPDFAction.class.getName());
+  private final ExecutorService executorService;
 
   public ExportToPDFAction(@NotNull Lookup pLookup)
   {
@@ -34,6 +38,10 @@ public class ExportToPDFAction extends AbstractAction
     putValue(SHORT_DESCRIPTION, "Export to PDF");
     putValue(SMALL_ICON, new ImageIcon(getClass().getResource(NbBundle.getMessage(ExportToPDFAction.class, "exportToPDFIcon"))));
     lookup = pLookup;
+    executorService = Executors.newCachedThreadPool(new ThreadFactoryBuilder()
+                                                        .setNameFormat("tAsciidocExporter")
+                                                        .setDaemon(true)
+                                                        .build());
     _initLogger();
   }
 
@@ -48,38 +56,12 @@ public class ExportToPDFAction extends AbstractAction
     if (returnValue == JFileChooser.APPROVE_OPTION)
     {
       File exportToFile = fileChooser.getSelectedFile();
-      try
-      {
-        FileObject fileToConvert = lookup.lookup(FileObject.class);
-        if (fileToConvert == null)
-          fileToConvert = lookup.lookup(DataObject.class).getPrimaryFile();
-        File javaFile = _getJavaFile();
-        if (javaFile.exists() && fileToConvert != null)
-        {
-          final String javaExePath = javaFile.getAbsolutePath();
-          final String fileToConvertPath = fileToConvert.getPath();
-          final String standaloneCP = _getFullClassPath();
-          String exportFilePath = exportToFile.getAbsolutePath();
-
-          // add extension, if not provided
-          if (!exportFilePath.toLowerCase(Locale.ROOT).endsWith(".pdf"))
-            exportFilePath += ".pdf";
-
-          logger.log(Level.INFO, String.format("AsciiDocPlugin standalone call is: %s %s %s %s %s %s", javaExePath, "-cp", standaloneCP,
-                                               ExportPdfStandalone.class.getCanonicalName(), fileToConvertPath, exportFilePath));
-          ProcessBuilder builder = new ProcessBuilder(javaExePath, "-cp", standaloneCP, ExportPdfStandalone.class.getCanonicalName(), fileToConvertPath, exportFilePath);
-          builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
-          builder.start();
-        }
-        else if (!javaFile.exists())
-        {
-          logger.log(Level.INFO, () -> String.format("AsciiDocPlugin could not find java exe, java.home property returns %s", System.getProperty("java.home")));
-        }
-      }
-      catch (IOException pE)
-      {
-        pE.printStackTrace();
-      }
+      FileObject fileToConvert = lookup.lookup(FileObject.class);
+      if (fileToConvert == null)
+        fileToConvert = lookup.lookup(DataObject.class).getPrimaryFile();
+      FileObject finalFileToConvert = fileToConvert;
+      if(finalFileToConvert != null)
+        executorService.execute(() -> _exportTo(finalFileToConvert, exportToFile));
     }
   }
 
@@ -88,6 +70,54 @@ public class ExportToPDFAction extends AbstractAction
   {
     //noinspection ConstantConditions
     return ExportPdfStandalone.class.getCanonicalName() != null;
+  }
+
+  /**
+   * Executes the export process and waits synchronously
+   *
+   * @param pTarget target to export to
+   */
+  private void _exportTo(@NotNull FileObject pSource, @NotNull File pTarget)
+  {
+    ProgressHandle handle = ProgressHandleFactory.createSystemHandle("Exporting '" + pSource.getNameExt() + "' as PDF...");
+    handle.start();
+    handle.progress(pTarget.getAbsolutePath());
+
+    try
+    {
+      File javaFile = _getJavaFile();
+      if (javaFile.exists())
+      {
+        final String javaExePath = javaFile.getAbsolutePath();
+        final String fileToConvertPath = pSource.getPath();
+        final String standaloneCP = _getFullClassPath();
+        String exportFilePath = pTarget.getAbsolutePath();
+
+        // add extension, if not provided
+        if (!exportFilePath.toLowerCase(Locale.ROOT).endsWith(".pdf"))
+          exportFilePath += ".pdf";
+
+        logger.log(Level.INFO, String.format("AsciiDocPlugin standalone call is: %s %s %s %s %s %s", javaExePath, "-cp", standaloneCP,
+                                             ExportPdfStandalone.class.getCanonicalName(), fileToConvertPath, exportFilePath));
+        ProcessBuilder builder = new ProcessBuilder(javaExePath, "-cp", standaloneCP, ExportPdfStandalone.class.getCanonicalName(),
+                                                    fileToConvertPath, exportFilePath);
+        builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+        builder.start().waitFor(5, TimeUnit.MINUTES);
+      }
+      else if (!javaFile.exists())
+      {
+        logger.log(Level.INFO, String.format("AsciiDocPlugin could not find java exe, java.home property returns %s",
+                                             System.getProperty("java.home")));
+      }
+    }
+    catch(Exception e)
+    {
+      logger.log(Level.WARNING, "", e);
+    }
+    finally
+    {
+      handle.finish();
+    }
   }
 
   /**
