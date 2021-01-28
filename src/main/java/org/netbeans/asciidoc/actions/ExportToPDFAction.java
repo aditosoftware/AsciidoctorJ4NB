@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.netbeans.asciidoc.converters.standalone.ExportPdfStandalone;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataObject;
+import org.openide.modules.Modules;
 import org.openide.util.*;
 import org.openide.windows.WindowManager;
 
@@ -12,7 +13,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.io.*;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.logging.*;
 
 /**
@@ -55,7 +57,7 @@ public class ExportToPDFAction extends AbstractAction
         {
           final String javaExePath = javaFile.getAbsolutePath();
           final String fileToConvertPath = fileToConvert.getPath();
-          final String standaloneCP = _getStandaloneCP() + "/*";
+          final String standaloneCP = _getFullClassPath();
           String exportFilePath = exportToFile.getAbsolutePath();
           logger.log(Level.INFO, () -> String.format("AsciiDocPlugin standalone call is: %s %s %s %s %s %s", javaExePath, "-cp", standaloneCP,
                                                      ExportPdfStandalone.class.getCanonicalName(), fileToConvertPath, exportFilePath));
@@ -78,7 +80,49 @@ public class ExportToPDFAction extends AbstractAction
   @Override
   public boolean isEnabled()
   {
+    //noinspection ConstantConditions
     return ExportPdfStandalone.class.getCanonicalName() != null;
+  }
+
+  /**
+   * @return the full classpath to execute the standalone class
+   */
+  @NotNull
+  private String _getFullClassPath()
+  {
+    String prefix = _getClasspathFolder();
+    String separator = SystemUtils.IS_OS_WINDOWS ? ";" : ":";
+    StringBuilder builder = new StringBuilder();
+
+    // add all files from "root" folder
+    builder.append(prefix).append("/*");
+    builder.append(separator);
+
+    // add all files from "ext" folder
+    try
+    {
+      prefix += "/ext/" + Modules.getDefault().ownerOf(getClass()).getCodeName();
+      Files.walkFileTree(new File(prefix).toPath(), new SimpleFileVisitor<>()
+      {
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs)
+        {
+          if (attrs.isDirectory())
+          {
+            builder.append(dir.toAbsolutePath().toString()).append("/*");
+            builder.append(separator);
+          }
+
+          return FileVisitResult.CONTINUE;
+        }
+      });
+    }
+    catch (Exception e)
+    {
+      logger.log(Level.WARNING, "", e);
+    }
+
+    return builder.toString();
   }
 
   /**
@@ -86,7 +130,7 @@ public class ExportToPDFAction extends AbstractAction
    *
    * @return path to the folder containing the jar file of the StandAlone class
    */
-  private String _getStandaloneCP()
+  private String _getClasspathFolder()
   {
     // get the path of the jarFile. Is something along the line file:/.*
     String jarFilePath = ExportPdfStandalone.class.getProtectionDomain().getCodeSource().getLocation().getPath();
