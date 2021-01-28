@@ -1,47 +1,59 @@
 package org.netbeans.asciidoc;
 
-import org.asciidoctor.*;
-import org.jruby.*;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.jruby.internal.JRubyAsciidoctor;
 
-import java.util.Arrays;
+import java.util.List;
 
 public final class AsciidoctorConverter
 {
+
   private static final LazyValue<AsciidoctorConverter> DEFAULT_REF = new LazyValue<>(AsciidoctorConverter::new);
 
   private final Asciidoctor doctor;
 
   private AsciidoctorConverter()
   {
-    //Ruby.getGlobalRuntime().getInstanceConfig().setCompileMode(RubyInstanceConfig.CompileMode.JIT);
-    this.doctor = Asciidoctor.Factory.create(Arrays.asList("gems/asciidoctor-1.5.4/lib",
-                                                           "gems/coderay-1.1.0/lib",
-                                                           "META-INF/jruby.home/lib/ruby/2.0",
+    doctor = JRubyAsciidoctor.create(List.of(
+        // Base
+        "uri:classloader:/META-INF/jruby.home/lib/ruby/2.0",
 
-                                                           // Asciidoctor-PDF
-                                                           "META-INF/jruby.home/lib/ruby/1.9",
-                                                           //"META-INF/jruby.home/lib/ruby/shared", //todo statt "shared" komplett aufzunehmen sollten evtl nur die nötigen Dependencies eingebunden werden -> https://github.com/jruby/warbler/issues/266
-                                                           "gems/thread_safe-0.3.5-java/lib",
-                                                           "gems/asciidoctor-pdf-1.5.0.alpha.11/lib",
-                                                           "gems/addressable-2.4.0/lib",
-                                                           "gems/afm-0.2.2/lib",
-                                                           "gems/Ascii85-1.0.2/lib",
-                                                           "gems/css_parser-1.3.7/lib",
-                                                           "gems/hashery-2.1.1/lib",
-                                                           "gems/pdf-core-0.4.0/lib",
-                                                           "gems/pdf-reader-1.3.3/lib",
-                                                           "gems/polyglot-0.3.5/lib",
-                                                           "gems/prawn-1.3.0/lib",
-                                                           "gems/prawn-icon-1.0.0/lib",
-                                                           "gems/prawn-svg-0.21.0/lib",
-                                                           "gems/prawn-table-0.2.2/lib",
-                                                           "gems/prawn-templates-0.0.3/lib",
-                                                           "gems/rouge-1.10.1/lib",
-                                                           "gems/ruby-rc4-0.1.5/lib",
-                                                           "gems/safe_yaml-1.0.4/lib",
-                                                           "gems/treetop-1.5.3/lib",
-                                                           "gems/ttfunk-1.4.0/lib"
-                                                           ));
+        // Asciidoctor
+        "uri:classloader:/gems/asciidoctor-2.0.12/lib",
+        "uri:classloader:/gems/coderay-1.1.3/lib",
+        "uri:classloader:/gems/erubis-2.7.0/lib",
+        "uri:classloader:/gems/haml-5.0.4/lib",
+        "uri:classloader:/gems/open-uri-cached-0.0.5/lib",
+        "uri:classloader:/gems/slim-4.0.1/lib",
+        "uri:classloader:/gems/temple-0.8.2/lib",
+        "uri:classloader:/gems/tilt-2.0.9/lib",
+
+        // Asciidoctor-PDF
+        "uri:classloader:/gems/asciidoctor-pdf-1.5.4/lib",
+        "uri:classloader:/gems/addressable-2.4.0/lib",
+        "uri:classloader:/gems/concurrent-ruby-1.1.7/lib",
+        "uri:classloader:/gems/afm-0.2.2/lib",
+        "uri:classloader:/gems/Ascii85-1.0.3/lib",
+        "uri:classloader:/gems/css_parser-1.7.1/lib",
+        "uri:classloader:/gems/hashery-2.1.2/lib",
+        "uri:classloader:/gems/pdf-core-0.7.0/lib",
+        "uri:classloader:/gems/pdf-reader-2.4.1/lib",
+        "uri:classloader:/gems/polyglot-0.3.5/lib",
+        "uri:classloader:/gems/prawn-2.2.2/lib",
+        "uri:classloader:/gems/prawn-icon-2.5.0/lib",
+        "uri:classloader:/gems/prawn-svg-0.31.0/lib",
+        "uri:classloader:/gems/prawn-table-0.2.2/lib",
+        "uri:classloader:/gems/prawn-templates-0.1.2/lib",
+        "uri:classloader:/gems/public_suffix-1.4.6/lib",
+        "uri:classloader:/gems/rghost-0.9.7/lib",
+        "uri:classloader:/gems/rouge-3.26.0/lib",
+        "uri:classloader:/gems/ruby-rc4-0.1.5/lib",
+        "uri:classloader:/gems/safe_yaml-1.0.5/lib",
+        "uri:classloader:/gems/text-hyphen-1.4.1/lib",
+        "uri:classloader:/gems/thread_safe-0.3.6-java/lib",
+        "uri:classloader:/gems/treetop-1.6.11/lib",
+        "uri:classloader:/gems/ttfunk-1.5.1/lib"
+    ));
   }
 
   public static AsciidoctorConverter getDefault()
@@ -54,8 +66,4 @@ public final class AsciidoctorConverter
     return doctor;
   }
 
-  public String convert(String src, Options options)
-  {
-    return doctor.convert(src, options);
-  }
 }
