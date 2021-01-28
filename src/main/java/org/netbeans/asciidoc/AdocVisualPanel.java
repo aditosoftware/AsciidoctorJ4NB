@@ -4,21 +4,20 @@ import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Scene;
 import javafx.scene.web.WebView;
+import org.apache.commons.io.FileUtils;
 import org.asciidoctor.*;
-import org.jtrim.concurrent.GenericUpdateTaskExecutor;
-import org.jtrim.concurrent.TaskExecutor;
-import org.jtrim.concurrent.UpdateTaskExecutor;
+import org.jtrim.concurrent.*;
 import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.queries.FileEncodingQuery;
 import org.netbeans.asciidoc.converters.ADocToHTMLConverter;
-import org.openide.filesystems.FileObject;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.File;
+import java.nio.charset.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 
 @SuppressWarnings("serial")
 public final class AdocVisualPanel extends JPanel {
@@ -63,7 +62,9 @@ public final class AdocVisualPanel extends JPanel {
             Options.SAFE, "unsafe",
             Options.HEADER_FOOTER, true
         ));
-        String html = Files.readString(target.toPath());
+
+        // asciidoctor only supports utf-8 ( https://github.com/asciidoctor/asciidoctor/issues/3595 )
+        String html = FileUtils.readFileToString(target, StandardCharsets.UTF_8);
 
         htmlComponentUpdater.execute(() -> updateHtmlNow(html));
       } catch (Throwable ex) {

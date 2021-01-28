@@ -1,10 +1,16 @@
 package org.netbeans.asciidoc.converters;
 
+import org.apache.commons.io.FileUtils;
 import org.asciidoctor.*;
 import org.jetbrains.annotations.NotNull;
+import org.netbeans.api.queries.FileEncodingQuery;
+import org.openide.filesystems.FileUtil;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.file.*;
 import java.util.*;
+import java.util.logging.*;
 
 /**
  * Basic class for the Converter classes that has some functions all of them need
@@ -55,6 +61,39 @@ public class BaseAsciiDocConverter
       else
         return new File(path + "." + pFileEnding);
     }
+    return pFile;
+  }
+
+  /**
+   * Tries to convert the file encoding
+   *
+   * @param pFile           File to convert
+   * @param pTargetEncoding target encoding
+   * @return the converted file copy
+   */
+  @NotNull
+  static File adjustFileEncoding(@NotNull File pFile, @NotNull Charset pTargetEncoding)
+  {
+    Charset current = null;
+
+    try
+    {
+      File file = FileUtil.normalizeFile(pFile);
+      current = FileEncodingQuery.getEncoding(FileUtil.toFileObject(file));
+      if(!Objects.equals(current, pTargetEncoding))
+      {
+        File tmp = Files.createTempFile("adoc_encoding", pFile.getName()).toFile();
+        String content = FileUtils.readFileToString(file, current);
+        FileUtils.write(tmp, content, pTargetEncoding);
+        return tmp;
+      }
+    }
+    catch(Throwable e)
+    {
+      Logger.getLogger(BaseAsciiDocConverter.class.getName())
+          .log(Level.WARNING, "Failed to adjust file encoding from " + current + " to " + pTargetEncoding, e);
+    }
+
     return pFile;
   }
 

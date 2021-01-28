@@ -7,6 +7,7 @@ import org.netbeans.asciidoc.AsciidoctorConverter;
 import org.openide.util.Lookup;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -45,6 +46,10 @@ public class ADocToHTMLConverter extends BaseAsciiDocConverter
   {
     if (canConvert(pSourceType, pTargetType, Map.of()))
     {
+      // Adjust encoding
+      pSourceLocation = adjustFileEncoding(pSourceLocation, StandardCharsets.UTF_8);
+
+      // Fill Options
       Map<String, Object> params = fillOptions(OptionsBuilder.options()
                                                    .docType(CONVERTER_FILE_TYPE)
                                                    .mkDirs(true)

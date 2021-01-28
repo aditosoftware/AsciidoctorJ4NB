@@ -5,6 +5,7 @@ import org.jetbrains.annotations.*;
 import org.netbeans.asciidoc.AsciidoctorConverter;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -43,10 +44,14 @@ public class ADocToPdfConverter extends BaseAsciiDocConverter
   {
     if(canConvert(pSourceType, pTargetType, Map.of()))
     {
+      // Adjust encoding
+      pSourceLocation = adjustFileEncoding(pSourceLocation, StandardCharsets.UTF_8);
+
       File targetFile = adjustFileEnding(pTargetLocation, CONVERTER_FILE_TYPE);
 
       // delete if exists, because it will be regenerated
       if(targetFile.exists() && targetFile.canRead())
+        //noinspection ResultOfMethodCallIgnored
         targetFile.delete();
 
       Options options = OptionsBuilder.options()
