@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Locale;
 import java.util.logging.*;
 
 /**
@@ -59,8 +60,13 @@ public class ExportToPDFAction extends AbstractAction
           final String fileToConvertPath = fileToConvert.getPath();
           final String standaloneCP = _getFullClassPath();
           String exportFilePath = exportToFile.getAbsolutePath();
-          logger.log(Level.INFO, () -> String.format("AsciiDocPlugin standalone call is: %s %s %s %s %s %s", javaExePath, "-cp", standaloneCP,
-                                                     ExportPdfStandalone.class.getCanonicalName(), fileToConvertPath, exportFilePath));
+
+          // add extension, if not provided
+          if (!exportFilePath.toLowerCase(Locale.ROOT).endsWith(".pdf"))
+            exportFilePath += ".pdf";
+
+          logger.log(Level.INFO, String.format("AsciiDocPlugin standalone call is: %s %s %s %s %s %s", javaExePath, "-cp", standaloneCP,
+                                               ExportPdfStandalone.class.getCanonicalName(), fileToConvertPath, exportFilePath));
           ProcessBuilder builder = new ProcessBuilder(javaExePath, "-cp", standaloneCP, ExportPdfStandalone.class.getCanonicalName(), fileToConvertPath, exportFilePath);
           builder.redirectOutput(ProcessBuilder.Redirect.INHERIT);
           builder.start();
