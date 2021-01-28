@@ -13,6 +13,7 @@ import org.openide.windows.WindowManager;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.nio.file.*;
@@ -55,13 +56,23 @@ public class ExportToPDFAction extends AbstractAction
     int returnValue = fileChooser.showSaveDialog(WindowManager.getDefault().getMainWindow());
     if (returnValue == JFileChooser.APPROVE_OPTION)
     {
-      File exportToFile = fileChooser.getSelectedFile();
+      // Find file to convert
       FileObject fileToConvert = lookup.lookup(FileObject.class);
       if (fileToConvert == null)
         fileToConvert = lookup.lookup(DataObject.class).getPrimaryFile();
-      FileObject finalFileToConvert = fileToConvert;
-      if(finalFileToConvert != null)
-        executorService.execute(() -> _exportTo(finalFileToConvert, exportToFile));
+
+      // Find target file
+      File exportToFile = fileChooser.getSelectedFile();
+      if (!exportToFile.getName().toLowerCase(Locale.ROOT).endsWith(".pdf"))
+        exportToFile = new File(exportToFile.getParentFile(), exportToFile.getName() + ".pdf");
+
+      // copy to make it final
+      final FileObject source = fileToConvert;
+      final File target = exportToFile;
+
+      // execute
+      if(source != null)
+        executorService.execute(() -> _exportTo(source, target));
     }
   }
 
@@ -92,11 +103,6 @@ public class ExportToPDFAction extends AbstractAction
         final String fileToConvertPath = pSource.getPath();
         final String standaloneCP = _getFullClassPath();
         String exportFilePath = pTarget.getAbsolutePath();
-
-        // add extension, if not provided
-        if (!exportFilePath.toLowerCase(Locale.ROOT).endsWith(".pdf"))
-          exportFilePath += ".pdf";
-
         logger.log(Level.INFO, String.format("AsciiDocPlugin standalone call is: %s %s %s %s %s %s", javaExePath, "-cp", standaloneCP,
                                              ExportPdfStandalone.class.getCanonicalName(), fileToConvertPath, exportFilePath));
         ProcessBuilder builder = new ProcessBuilder(javaExePath, "-cp", standaloneCP, ExportPdfStandalone.class.getCanonicalName(),
@@ -117,6 +123,17 @@ public class ExportToPDFAction extends AbstractAction
     finally
     {
       handle.finish();
+    }
+
+    try
+    {
+      // open after export
+      if (pTarget.exists() && Desktop.isDesktopSupported())
+        Desktop.getDesktop().open(pTarget);
+    }
+    catch(Exception e)
+    {
+      // ignored
     }
   }
 
