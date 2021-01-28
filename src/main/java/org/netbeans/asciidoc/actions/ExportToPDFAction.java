@@ -40,7 +40,7 @@ public class ExportToPDFAction extends AbstractAction
     fileChooser.setDialogTitle("Export to PDF");
     fileChooser.setMultiSelectionEnabled(false);
     fileChooser.setFileFilter(new FileNameExtensionFilter("PDF", "pdf"));
-    int returnValue = fileChooser.showOpenDialog(null);
+    int returnValue = fileChooser.showSaveDialog(null);
     if (returnValue == JFileChooser.APPROVE_OPTION)
     {
       File exportToFile = fileChooser.getSelectedFile();
