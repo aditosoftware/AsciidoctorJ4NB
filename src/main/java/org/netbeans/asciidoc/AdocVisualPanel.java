@@ -10,6 +10,7 @@ import org.jtrim.concurrent.*;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.queries.FileEncodingQuery;
 import org.netbeans.asciidoc.converters.ADocToHTMLConverter;
+import org.netbeans.asciidoc.util.HTMLUtility;
 
 import javax.swing.*;
 import java.io.File;
@@ -83,6 +84,9 @@ public final class AdocVisualPanel extends JPanel {
       jfxPanel.setScene(new Scene(currentWebView));
       webView = currentWebView;
     }
+
+    // special handling for iframe, because the webview is not able to load it correctly..
+    html = HTMLUtility.removeTag(html, "iframe", "<span>[iframe element not previewable]<span>");
 
     currentWebView.getEngine().loadContent(html);
   }
