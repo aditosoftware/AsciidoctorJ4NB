@@ -1,5 +1,6 @@
 package org.netbeans.asciidoc;
 
+import org.netbeans.asciidoc.actions.*;
 import org.netbeans.asciidoc.structure.AsciidoctorLanguageConfig;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.text.MultiViewEditorElement;
@@ -9,13 +10,13 @@ import org.openide.awt.ActionReferences;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
-import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.TopComponent;
 
+import javax.swing.*;
 import java.io.IOException;
 
 @Messages({
@@ -109,7 +110,28 @@ public class AdocDataObject extends MultiDataObject {
   )
   @Messages("LBL_ASCIIDOC_EDITOR=Source")
   public static MultiViewEditorElement createEditor(Lookup lkp) {
-    return new MultiViewEditorElement(lkp);
+    return new _SourceEditorElement(lkp);
   }
 
+  private static class _SourceEditorElement extends MultiViewEditorElement
+  {
+    private final LazyValue<JToolBar> toolBarRef;
+
+    public _SourceEditorElement(Lookup lookup)
+    {
+      super(lookup);
+      toolBarRef = new LazyValue<>(() -> {
+        JToolBar toolbar = new JToolBar();
+        toolbar.setFloatable(false);
+        toolbar.add(new AddUserhelpImageAction(lookup));
+        return toolbar;
+      });
+    }
+
+    @Override
+    public JComponent getToolbarRepresentation()
+    {
+      return toolBarRef.get();
+    }
+  }
 }

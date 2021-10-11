@@ -17,7 +17,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <netbeans.version>RELEASE111</netbeans.version>
+    <netbeans.version>RELEASE122</netbeans.version>
     <asm.version>4.1</asm.version>
     <jtrim.version>1.7.3</jtrim.version>
   </properties>
@@ -34,6 +34,21 @@
       <artifactId>lwjavafx</artifactId>
       <version>11-1.2.0</version>
     </dependency>
+    <dependency>
+      <groupId>de.adito.nb-modules</groupId>
+      <artifactId>de-adito-netbeans-utilities</artifactId>
+      <version>${netbeans.version}-1.6.2-3</version>
+    </dependency>
+    <dependency>
+      <groupId>info.clearthought</groupId>
+      <artifactId>table-layout</artifactId>
+      <version>4.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>io.reactivex.rxjava3</groupId>
+      <artifactId>rxjava</artifactId>
+      <version>3.0.4</version>
+    </dependency>
 
     <!-- JTrim -->
     <dependency>
@@ -47,6 +62,13 @@
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>29.0-jre</version>
+    </dependency>
+
+    <!-- jdom -->
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom2</artifactId>
+      <version>2.0.6</version>
     </dependency>
 
     <!-- AsciiDoctor -->
@@ -334,6 +356,26 @@
     <dependency>
       <groupId>org.netbeans.api</groupId>
       <artifactId>org-netbeans-modules-csl-types</artifactId>
+      <version>${netbeans.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
+      <artifactId>org-openide-util-ui</artifactId>
+      <version>${netbeans.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
+      <artifactId>org-netbeans-swing-outline</artifactId>
+      <version>${netbeans.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
+      <artifactId>org-netbeans-modules-projectapi</artifactId>
+      <version>${netbeans.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
+      <artifactId>org-netbeans-modules-projectuiapi-base</artifactId>
       <version>${netbeans.version}</version>
     </dependency>
 
