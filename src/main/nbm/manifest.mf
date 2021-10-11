@@ -4,6 +4,11 @@ OpenIDE-Module-Localizing-Bundle: org/netbeans/asciidoc/Bundle.properties
 OpenIDE-Module-Layer: org/netbeans/asciidoc/layer.xml
 OpenIDE-Module-Long-Description: AsciidoctorJ is used to render the preview for the documentation written in AsciiDoc within the ADITO Designer.
   <p style="font-weight: bold;">Changelog</p>
+  <p style="font-weight: bold;">v.1.3.0</p>
+  <p style="margin-left: 10px; font-weight: bold;">MAJOR</p>
+  <ul>
+    <li>Add userhelp images with an action. The images are copied into the selected directory, all relevant liquibase changesets are generated and an image reference is inserted into the adoc file.</li>
+  </ul>
   <p style="font-weight: bold;">v.1.2.0</p>
   <p style="margin-left: 10px; font-weight: bold;">MAJOR</p>
   <ul>
