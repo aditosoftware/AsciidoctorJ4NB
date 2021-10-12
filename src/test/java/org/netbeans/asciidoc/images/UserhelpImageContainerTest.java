@@ -43,7 +43,6 @@ public class UserhelpImageContainerTest
         "<column name=\"CONTAINERNAME\" value=\"DOCUMENT\" />" +
         "<column name=\"USER_NEW\" value=\"userhelp\" />" +
         "<column name=\"DATE_NEW\" valueDate=\"" + container.getChangesetDate() + "\" />" +
-        "<column name=\"USER_NEW\" value=\"userhelp\" />" +
         "<column name=\"MIMETYPE\" value=\"image/png\" />" +
         "<column name=\"ID\" value=\"" + container.getIdFile() + "\" />" +
         "<column name=\"DATASIZE\" value=\"0\" />" +

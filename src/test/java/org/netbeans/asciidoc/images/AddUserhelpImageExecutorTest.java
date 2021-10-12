@@ -43,14 +43,13 @@ public class AddUserhelpImageExecutorTest
         "      <column name=\"CONTAINERNAME\" value=\"DOCUMENT\" />\n" +
         "      <column name=\"USER_NEW\" value=\"userhelp\" />\n" +
         "      <column name=\"DATE_NEW\" valueDate=\"" + container.getChangesetDate() + "\" />\n" +
-        "      <column name=\"USER_NEW\" value=\"userhelp\" />\n" +
         "      <column name=\"MIMETYPE\" value=\"image/png\" />\n" +
         "      <column name=\"ID\" value=\"" + container.getIdFile() + "\" />\n" +
         "      <column name=\"DATASIZE\" value=\"0\" />\n" +
         "      <column name=\"TABLENAME\" value=\"USERHELP\" />\n" +
         "      <column name=\"FILENAME\" value=\"" + container.getIdFile() + "\" />\n" +
-        "      <column name=\"BINDATA\" value=\"" + UserhelpImageContainer.IMAGES_TARGET_DIRECTORY + "/" + targetImageName + "\" />\n" +
-        "      <column name=\"PREVIEW\" value=\"" + UserhelpImageContainer.IMAGES_TARGET_DIRECTORY + "/" + targetImageName + "\" />\n" +
+        "      <column name=\"BINDATA\" valueBlobFile=\"" + UserhelpImageContainer.IMAGES_TARGET_DIRECTORY + "/" + targetImageName + "\" />\n" +
+        "      <column name=\"PREVIEW\" valueBlobFile=\"" + UserhelpImageContainer.IMAGES_TARGET_DIRECTORY + "/" + targetImageName + "\" />\n" +
         "    </insert>\n" +
         "  </changeSet>\n" +
         "</databaseChangeLog>";

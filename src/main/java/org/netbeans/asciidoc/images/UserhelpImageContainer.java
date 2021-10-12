@@ -105,7 +105,6 @@ public class UserhelpImageContainer
     insert.addContent(new Element("column").setAttribute("name", "USER_NEW").setAttribute("value", "userhelp"));
     insert.addContent(new Element("column").setAttribute("name", "DATE_NEW")
                           .setAttribute("valueDate", getChangesetDate()));
-    insert.addContent(new Element("column").setAttribute("name", "USER_NEW").setAttribute("value", "userhelp"));
     insert.addContent(new Element("column").setAttribute("name", "MIMETYPE")
                           .setAttribute("value", URLConnection.guessContentTypeFromName(sourceImage.getName())));
     insert.addContent(new Element("column").setAttribute("name", "ID").setAttribute("value", idFile));
@@ -123,9 +122,9 @@ public class UserhelpImageContainer
     insert.addContent(new Element("column").setAttribute("name", "TABLENAME").setAttribute("value", "USERHELP"));
     insert.addContent(new Element("column").setAttribute("name", "FILENAME").setAttribute("value", idFile));
     insert.addContent(new Element("column").setAttribute("name", "BINDATA")
-                          .setAttribute("value", IMAGES_TARGET_DIRECTORY + "/" + targetImageName));
+                          .setAttribute("valueBlobFile", IMAGES_TARGET_DIRECTORY + "/" + targetImageName));
     insert.addContent(new Element("column").setAttribute("name", "PREVIEW")
-                          .setAttribute("value", IMAGES_TARGET_DIRECTORY + "/" + targetImageName));
+                          .setAttribute("valueBlobFile", IMAGES_TARGET_DIRECTORY + "/" + targetImageName));
 
     root.addContent(insert);
     return root;
