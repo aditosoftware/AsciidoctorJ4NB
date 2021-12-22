@@ -407,6 +407,11 @@
       <version>${netbeans.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.netbeans.api</groupId>
+      <artifactId>org-netbeans-modules-options-api</artifactId>
+      <version>${netbeans.version}</version>
+    </dependency>
 
     <!-- Apache Commons -->
     <dependency>
@@ -436,6 +441,15 @@
         <artifactId>maven-dependency-plugin</artifactId>
         <version>3.1.1</version>
       </plugin>
+      <plugin>
+        <groupId>org.apache.netbeans.utilities</groupId>
+        <artifactId>nbm-maven-plugin</artifactId>
+        <version>4.5</version>
+        <configuration>
+          <verifyRuntime>false</verifyRuntime>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
