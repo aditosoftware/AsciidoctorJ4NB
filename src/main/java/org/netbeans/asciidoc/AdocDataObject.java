@@ -124,6 +124,7 @@ public class AdocDataObject extends MultiDataObject {
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
         toolbar.add(new AddUserhelpImageAction(lookup));
+        toolbar.add(new OpenFormattingSettingsAction());
         return toolbar;
       });
     }
