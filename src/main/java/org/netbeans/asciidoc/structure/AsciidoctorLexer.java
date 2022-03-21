@@ -1,9 +1,7 @@
 package org.netbeans.asciidoc.structure;
 
-import org.netbeans.api.lexer.Token;
-import org.netbeans.spi.lexer.Lexer;
-import org.netbeans.spi.lexer.LexerInput;
-import org.netbeans.spi.lexer.LexerRestartInfo;
+import org.netbeans.api.lexer.*;
+import org.netbeans.spi.lexer.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,7 +38,25 @@ public final class AsciidoctorLexer implements Lexer<AsciidoctorTokenId> {
     }
 
     AsciidoctorToken token = tokensItr.next();
-    return info.tokenFactory().createToken(token.getId(), token.getLength());
+    // BEGIN ADITO
+    try
+    {
+      return info.tokenFactory().createToken(token.getId(), token.getLength());
+    }
+    catch (Exception originalEx)
+    {
+      try
+      {
+        // try it with no length
+        return info.tokenFactory().createToken(token.getId());
+      }
+      catch (Exception innerEx)
+      {
+        //throw the original exception
+        throw originalEx;
+      }
+    }
+    // END ADITO
   }
 
   @Override
