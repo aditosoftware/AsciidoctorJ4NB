@@ -1,6 +1,7 @@
 package org.netbeans.asciidoc.converters;
 
 import de.adito.aditoweb.nbm.nbide.nbaditointerface.conversions.IFileConverterParameterProvider;
+import lombok.NonNull;
 import org.asciidoctor.*;
 import org.jetbrains.annotations.*;
 import org.netbeans.asciidoc.AsciidoctorConverter;
@@ -35,14 +36,14 @@ public class ADocToHTMLConverter extends BaseAsciiDocConverter
   private static final List<String> htmlMimeType = List.of("text/html");
   private static final List<String> htmlFileEndings = List.of(CONVERTER_FILE_TYPE);
 
-  public boolean canConvert(@NotNull String pSourceType, @NotNull String pTargetType, @NotNull Map<Object, Object> pParams)
+  public boolean canConvert(@NonNull String pSourceType, @NonNull String pTargetType, @NonNull Map<Object, Object> pParams)
   {
     return (asciiDocFileEndings.contains(pSourceType) || asciiDocMimeTypes.contains(pSourceType))
         && (htmlFileEndings.contains(pTargetType) || htmlMimeType.contains(pTargetType));
   }
 
-  public Object convert(@NotNull File pSourceLocation, @NotNull File pTargetLocation, @NotNull String pSourceType, @NotNull String pTargetType,
-                        @NotNull Map<Object, Object> pParams)
+  public Object convert(@NonNull File pSourceLocation, @NonNull File pTargetLocation, @NonNull String pSourceType, @NonNull String pTargetType,
+                        @NonNull Map<Object, Object> pParams)
   {
     if (canConvert(pSourceType, pTargetType, Map.of()))
     {
@@ -67,8 +68,8 @@ public class ADocToHTMLConverter extends BaseAsciiDocConverter
   }
 
   @Nullable
-  public Object convert(@NotNull Reader pSource, @NotNull Writer pTarget, @NotNull String pSourceType, @NotNull String pTargetType,
-                        @NotNull Map<Object, Object> pParams) throws IOException
+  public Object convert(@NonNull Reader pSource, @NonNull Writer pTarget, @NonNull String pSourceType, @NonNull String pTargetType,
+                        @NonNull Map<Object, Object> pParams) throws IOException
   {
     if (canConvert(pSourceType, pTargetType, Map.of()))
     {

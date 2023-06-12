@@ -2,7 +2,7 @@ package org.netbeans.asciidoc.images;
 
 import de.adito.swing.*;
 import info.clearthought.layout.*;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import org.netbeans.api.project.Project;
 import org.openide.DialogDescriptor;
 import org.openide.filesystems.*;
@@ -32,7 +32,7 @@ public class AddUserhelpImagePanel extends JPanel
   private final JLabel errorText;
   private DialogDescriptor desc;
 
-  public AddUserhelpImagePanel(@NotNull Project pProject)
+  public AddUserhelpImagePanel(@NonNull Project pProject)
   {
     super(new BorderLayout());
     setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -99,7 +99,7 @@ public class AddUserhelpImagePanel extends JPanel
     tlu.add(0, 10, 2, 10, errorText);
   }
 
-  public void setDescriptor(@NotNull DialogDescriptor pDesc)
+  public void setDescriptor(@NonNull DialogDescriptor pDesc)
   {
     desc = pDesc;
     _updateStates();

@@ -1,8 +1,8 @@
 package org.netbeans.asciidoc.converters;
 
+import lombok.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.asciidoctor.*;
-import org.jetbrains.annotations.NotNull;
 import org.netbeans.api.queries.FileEncodingQuery;
 import org.openide.filesystems.FileUtil;
 
@@ -51,7 +51,7 @@ public class BaseAsciiDocConverter
    * @param pFileEnding the fileEnding the passed file should have
    * @return the File itself if the fileEnding was correct or no fileEnding could be determined, the file with adjusted fileEnding otherwise
    */
-  static File adjustFileEnding(@NotNull File pFile, @NotNull String pFileEnding)
+  static File adjustFileEnding(@NonNull File pFile, @NonNull String pFileEnding)
   {
     if (!pFile.getAbsolutePath().endsWith("." + pFileEnding))
     {
@@ -71,8 +71,8 @@ public class BaseAsciiDocConverter
    * @param pTargetEncoding target encoding
    * @return the converted file copy
    */
-  @NotNull
-  static File adjustFileEncoding(@NotNull File pFile, @NotNull Charset pTargetEncoding)
+  @NonNull
+  static File adjustFileEncoding(@NonNull File pFile, @NonNull Charset pTargetEncoding)
   {
     Charset current = null;
 

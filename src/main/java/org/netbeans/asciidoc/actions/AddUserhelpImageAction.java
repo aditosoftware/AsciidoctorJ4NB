@@ -3,6 +3,7 @@ package org.netbeans.asciidoc.actions;
 import de.adito.aditoweb.nbm.vaadinicons.IVaadinIconsProvider;
 import de.adito.notification.INotificationFacade;
 import de.adito.swing.icon.IconAttributes;
+import lombok.NonNull;
 import org.jetbrains.annotations.*;
 import org.netbeans.api.editor.mimelookup.*;
 import org.netbeans.api.project.*;
@@ -31,7 +32,7 @@ public class AddUserhelpImageAction extends AbstractAction implements CodeGenera
   private static final String _DISPLAY_NAME = NbBundle.getMessage(AddUserhelpImageAction.class, "LBL_ADD_IMAGE_ACTION");
   private Lookup lookup;
 
-  public AddUserhelpImageAction(@NotNull Lookup pLookup)
+  public AddUserhelpImageAction(@NonNull Lookup pLookup)
   {
     super(_DISPLAY_NAME);
     putValue(SHORT_DESCRIPTION, _DISPLAY_NAME);
@@ -75,7 +76,7 @@ public class AddUserhelpImageAction extends AbstractAction implements CodeGenera
   }
 
   @Override
-  @NotNull
+  @NonNull
   public String getDisplayName()
   {
     return _DISPLAY_NAME;
