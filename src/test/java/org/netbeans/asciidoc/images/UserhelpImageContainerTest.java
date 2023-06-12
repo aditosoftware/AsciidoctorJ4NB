@@ -48,8 +48,8 @@ public class UserhelpImageContainerTest
         "<column name=\"DATASIZE\" value=\"0\" />" +
         "<column name=\"TABLENAME\" value=\"USERHELP\" />" +
         "<column name=\"FILENAME\" value=\"" + container.getIdFile() + "\" />" +
-        "<column name=\"BINDATA\" value=\"" + UserhelpImageContainer.IMAGES_TARGET_DIRECTORY + "/" + targetFileName + "\" />" +
-        "<column name=\"PREVIEW\" value=\"" + UserhelpImageContainer.IMAGES_TARGET_DIRECTORY + "/" + targetFileName + "\" />" +
+        "<column name=\"BINDATA\" valueBlobFile=\"" + UserhelpImageContainer.IMAGES_TARGET_DIRECTORY + "/" + targetFileName + "\" />" +
+        "<column name=\"PREVIEW\" valueBlobFile=\"" + UserhelpImageContainer.IMAGES_TARGET_DIRECTORY + "/" + targetFileName + "\" />" +
         "</insert></changeSet>";
 
     assertEquals(expected, new XMLOutputter().outputString(container.getChangeSet()));

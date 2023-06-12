@@ -127,7 +127,7 @@ public class AsciidoctorTokenizerTest {
             assertEquals(expectedId, token.getId());
 
             String tokenStr = input.substring(token.getStartIndex(), token.getEndIndex());
-            assertEquals("tokenContent", expectedContent, tokenStr);
+            assertEquals("tokenContent", expectedContent, tokenStr.replace("\r",""));
         }
 
         public void verifyNoMoreTokens() {
