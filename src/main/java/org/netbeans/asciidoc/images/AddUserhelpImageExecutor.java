@@ -2,6 +2,7 @@ package org.netbeans.asciidoc.images;
 
 import com.google.common.base.Charsets;
 import de.adito.notification.INotificationFacade;
+import lombok.NonNull;
 import org.apache.commons.io.*;
 import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
@@ -40,7 +41,7 @@ public class AddUserhelpImageExecutor
     }
   }
 
-  public AddUserhelpImageExecutor(@NotNull UserhelpImageContainer pContainer, @Nullable JEditorPane pPane)
+  public AddUserhelpImageExecutor(@NonNull UserhelpImageContainer pContainer, @Nullable JEditorPane pPane)
   {
     container = pContainer;
     pane = pPane;
@@ -90,7 +91,7 @@ public class AddUserhelpImageExecutor
    *
    * @param pTargetFolder target folder
    */
-  private void _processImage(@NotNull File pTargetFolder) throws IOException
+  private void _processImage(@NonNull File pTargetFolder) throws IOException
   {
     File targetImageFolder = new File(pTargetFolder, UserhelpImageContainer.IMAGES_TARGET_DIRECTORY);
     FileUtils.copyFile(container.getSourceImage(), new File(targetImageFolder, container.getTargetImageName()), true);
@@ -101,7 +102,7 @@ public class AddUserhelpImageExecutor
    *
    * @param pTargetFolder the folder, where the changelog is located
    */
-  private void _processChangelog(@NotNull File pTargetFolder) throws IOException
+  private void _processChangelog(@NonNull File pTargetFolder) throws IOException
   {
     File changelogFile = new File(pTargetFolder, CHANGELOG_XML);
     if (!changelogFile.exists())

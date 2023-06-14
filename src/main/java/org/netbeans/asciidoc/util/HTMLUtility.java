@@ -1,6 +1,6 @@
 package org.netbeans.asciidoc.util;
 
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 
 import java.util.regex.Pattern;
 
@@ -18,8 +18,8 @@ public class HTMLUtility
    * @param pReplacement Replacement string
    * @return the new replaced string
    */
-  @NotNull
-  public static String removeTag(@NotNull String pText, @NotNull String pTagToRemove, @NotNull String pReplacement)
+  @NonNull
+  public static String removeTag(@NonNull String pText, @NonNull String pTagToRemove, @NonNull String pReplacement)
   {
     return Pattern.compile("(?:<" + pTagToRemove + "[^>]*)(?:(?:\\/>)|(?:>.*?<\\/" + pTagToRemove + ">))", Pattern.DOTALL)
         .matcher(pText)

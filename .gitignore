@@ -3,5 +3,6 @@
 /.idea/vcs.xml
 !/.idea/codeStyleSettings.xml
 !/.idea/projectCodeStyle.xml
+!/.idea/misc.xml
 target/
 *keystore

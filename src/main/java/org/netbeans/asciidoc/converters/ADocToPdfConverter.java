@@ -1,5 +1,6 @@
 package org.netbeans.asciidoc.converters;
 
+import lombok.NonNull;
 import org.asciidoctor.*;
 import org.jetbrains.annotations.*;
 import org.netbeans.asciidoc.AsciidoctorConverter;
@@ -33,14 +34,14 @@ public class ADocToPdfConverter extends BaseAsciiDocConverter
   private static List<String> htmlMimeType = List.of("application/pdf", "application/x-pdf");
   private static List<String> pdfFileEndings = List.of(CONVERTER_FILE_TYPE);
 
-  public boolean canConvert(@NotNull String pSourceType, @NotNull String pTargetType, @NotNull Map<Object, Object> pParams)
+  public boolean canConvert(@NonNull String pSourceType, @NonNull String pTargetType, @NonNull Map<Object, Object> pParams)
   {
     return (asciiDocFileEndings.contains(pSourceType) || asciiDocMimeTypes.contains(pSourceType))
         && (pdfFileEndings.contains(pTargetType) || htmlMimeType.contains(pTargetType));
   }
 
-  public Object convert(@NotNull File pSourceLocation, @NotNull File pTargetLocation, @NotNull String pSourceType, @NotNull String pTargetType,
-                        @NotNull Map<Object, Object> pParams)
+  public Object convert(@NonNull File pSourceLocation, @NonNull File pTargetLocation, @NonNull String pSourceType, @NonNull String pTargetType,
+                        @NonNull Map<Object, Object> pParams)
   {
     if(canConvert(pSourceType, pTargetType, Map.of()))
     {
@@ -64,8 +65,8 @@ public class ADocToPdfConverter extends BaseAsciiDocConverter
   }
 
   @Nullable
-  public Object convert(@NotNull Reader pSource, @NotNull Writer pTarget, @NotNull String pSourceType, @NotNull String pTargetType,
-                        @NotNull Map<Object, Object> pParams) throws IOException
+  public Object convert(@NonNull Reader pSource, @NonNull Writer pTarget, @NonNull String pSourceType, @NonNull String pTargetType,
+                        @NonNull Map<Object, Object> pParams) throws IOException
   {
     if(canConvert(pSourceType, pTargetType, Map.of()))
     {

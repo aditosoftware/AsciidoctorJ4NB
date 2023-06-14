@@ -1,8 +1,8 @@
 package org.netbeans.asciidoc.actions;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import lombok.NonNull;
 import org.apache.commons.lang3.SystemUtils;
-import org.jetbrains.annotations.NotNull;
 import org.netbeans.api.progress.*;
 import org.netbeans.asciidoc.converters.standalone.ExportPdfStandalone;
 import org.openide.filesystems.FileObject;
@@ -29,11 +29,11 @@ public class ExportToPDFAction extends AbstractAction
 {
   private static final Logger logger = Logger.getLogger(ExportToPDFAction.class.getName());
 
-  @NotNull
+  @NonNull
   private final Lookup lookup;
   private final ExecutorService executorService;
 
-  public ExportToPDFAction(@NotNull Lookup pLookup)
+  public ExportToPDFAction(@NonNull Lookup pLookup)
   {
     super("Export To PDF");
     putValue(SHORT_DESCRIPTION, "Export to PDF");
@@ -88,7 +88,7 @@ public class ExportToPDFAction extends AbstractAction
    *
    * @param pTarget target to export to
    */
-  private void _exportTo(@NotNull FileObject pSource, @NotNull File pTarget)
+  private void _exportTo(@NonNull FileObject pSource, @NonNull File pTarget)
   {
     ProgressHandle handle = ProgressHandleFactory.createSystemHandle("Exporting '" + pSource.getNameExt() + "' as PDF...");
     handle.start();
@@ -140,7 +140,7 @@ public class ExportToPDFAction extends AbstractAction
   /**
    * @return the full classpath to execute the standalone class
    */
-  @NotNull
+  @NonNull
   private String _getFullClassPath()
   {
     String prefix = _getClasspathFolder();

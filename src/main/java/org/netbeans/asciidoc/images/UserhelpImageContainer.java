@@ -1,5 +1,6 @@
 package org.netbeans.asciidoc.images;
 
+import lombok.NonNull;
 import org.jdom2.*;
 import org.jetbrains.annotations.*;
 
@@ -28,7 +29,7 @@ public class UserhelpImageContainer
   private String changesetId;
   private String alternativeText;
 
-  public UserhelpImageContainer(@NotNull String pAuthor, @NotNull File pSourceImage, @NotNull File pTargetDirectory, @NotNull String pTargetImageName,
+  public UserhelpImageContainer(@NonNull String pAuthor, @NonNull File pSourceImage, @NonNull File pTargetDirectory, @NonNull String pTargetImageName,
                                 @Nullable String pAlternativeText)
   {
     author = pAuthor;
